@@ -85,6 +85,8 @@ This will create files `roto-ie.h5`, `roto-ie.dict`, and `roto-ie.labels`.
 
 **Updated** extraction models can be downloaded from https://drive.google.com/drive/folders/1QKudbCwFuj1BAhpY58JstyGLZXvZ-2w-?usp=sharing
 
+**Updated** (with fix for number words and order of relations) extraction models can be downloaded from https://drive.google.com/open?id=1WGLCndbPte0p738a9p_WcBh9elbnHNmI
+
 2. Once you've generated summaries, you can put them into a format the extraction system can consume as follows:
 
 ```
