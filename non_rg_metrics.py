@@ -1,5 +1,6 @@
 import sys
 from pyxdameraulevenshtein import normalized_damerau_levenshtein_distance
+from text2num import text2num
 
 full_names = ['Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'Charlotte Hornets',
  'Chicago Bulls', 'Cleveland Cavaliers', 'Detroit Pistons', 'Indiana Pacers',
@@ -27,15 +28,27 @@ for team in full_names:
         cities.add(" ".join(pieces[:2]))
         teams.add(pieces[2])
 
-
 def same_ent(e1, e2):
-    if e1 in cities or e1 in teams:
+    if e1 in cities or e1 in teams or e2 in cities or e2 in teams:
         return e1 == e2 or any((e1 in fullname and e2 in fullname for fullname in full_names))
     else:
         return e1 in e2 or e2 in e1
 
+def int_value(input):
+    a_number = False
+    try: 
+        value = int(input)
+        a_number = True
+    except ValueError:
+        pass
+
+    if not a_number:
+        value = text2num(input)
+    return value
+
+# handling matches for number words too
 def trip_match(t1, t2):
-    return t1[1] == t2[1] and t1[2] == t2[2] and same_ent(t1[0], t2[0])
+    return int_value(t1[1]) == int_value(t2[1]) and t1[2] == t2[2] and same_ent(t1[0], t2[0])
 
 def dedup_triples(triplist):
     """
@@ -63,9 +76,6 @@ def get_triples(fi):
     if len(curr) > 0:
         all_triples.append(dedup_triples(curr))
     return all_triples
-
-def trip_match(t1, t2):
-    return t1[1] == t2[1] and t1[2] == t2[2] and same_ent(t1[0], t2[0])
 
 def calc_precrec(goldfi, predfi):
     gold_triples = get_triples(goldfi)

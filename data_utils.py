@@ -1,5 +1,5 @@
 import sys, codecs, json, os
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict,OrderedDict
 from nltk import sent_tokenize, word_tokenize
 import numpy as np
 import h5py
@@ -20,7 +20,11 @@ number_words = set(["one", "two", "three", "four", "five", "six", "seven", "eigh
                     "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
                     "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty",
                     "sixty", "seventy", "eighty", "ninety", "hundred", "thousand"])
-
+# ordering the relations correctly
+class DefaultListOrderedDict(OrderedDict):
+    def __missing__(self,k):
+        self[k] = []
+        return self[k]
 
 def get_ents(dat):
     players = set()
@@ -110,10 +114,10 @@ def extract_entities(sent, all_ents, prons, prev_ents=None, resolve_prons=False,
             i += 1
     return sent_ents
 
-
+# fixing bug of number words handling
 def annoying_number_word(sent, i):
-    ignores = set(["three point", "three - point", "three - pt", "three pt"])
-    return " ".join(sent[i:i+3]) not in ignores and " ".join(sent[i:i+2]) not in ignores
+    ignores = set(["three point", "three - point", "three - pt", "three pt", "three - pointers", "three - pointer", "three pointers"])
+    return " ".join(sent[i:i + 3]) in ignores or " ".join(sent[i:i + 2]) in ignores
 
 def extract_numbers(sent):
     sent_nums = []
@@ -133,14 +137,15 @@ def extract_numbers(sent):
             i += 1
         elif toke in number_words and not annoying_number_word(sent, i): # get longest span  (this is kind of stupid)
             j = 1
-            while i+j <= len(sent) and sent[i+j] in number_words and not annoying_number_word(sent, i+j):
+            while i + j < len(sent) and sent[i + j] in number_words and not annoying_number_word(sent, i + j):
                 j += 1
             try:
                 sent_nums.append((i, i+j, text2num(" ".join(sent[i:i+j]))))
             except NumberException:
-                print sent
-                print sent[i:i+j]
-                assert False
+                pass
+                #print sent
+                #print sent[i:i+j]
+                #assert False
             i += j
         else:
             i += 1
@@ -306,7 +311,7 @@ def append_multilabeled_data(tup, sents, lens, entdists, numdists, labels, vocab
     sentlen = len(sent)
     sent.extend([-1] * (max_len - sentlen))
     # get all the labels for the same rel
-    unique_rels = defaultdict(list)
+    unique_rels = DefaultListOrderedDict()
     for rel in tup[1]:
         ent, num, label, idthing = rel
         unique_rels[ent, num].append(label)
