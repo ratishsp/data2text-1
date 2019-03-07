@@ -31,6 +31,12 @@ cmd:option('-just_eval', false, [[just eval generations]])
 cmd:option('-lstm', false, [[use a BLSTM rather than a convolutional model]])
 cmd:option('-geom', false, [[average models geometrically]])
 cmd:option('-test', false, [[use test data]])
+cmd:option('-convens_paths1', 'conv1-ep10-94-73' , [[path to conv net files]])
+cmd:option('-convens_paths2', 'conv2-ep10-95-71' , [[path to conv net files]])
+cmd:option('-convens_paths3', 'conv3-ep10-94-71' , [[path to conv net files]])
+cmd:option('-lstmens_paths1', 'lstm1-ep5-92-76' , [[path to conv net files]])
+cmd:option('-lstmens_paths2', 'lstm2-ep4-93-74' , [[path to conv net files]])
+cmd:option('-lstmens_paths3', 'lstm3-ep10-90-78' , [[path to conv net files]])
 
 local opt = cmd:parse(arg)
 
@@ -535,13 +541,24 @@ function set_up_saved_models()
 	                 "blstmie-ep7-2.t7",
 			 "blstmie-ep10-3.t7"}
   --]]
+ --[[
   local convens_paths = {"conv1ie-ep6-94-74.t7",
                          "conv2ie-ep3-94-60.t7",
 			 "conv3ie-ep8-95-72.t7"}
 
   local lstmens_paths = {"blstm1ie-ep4-93-75.t7",
 	                 "blstm2ie-ep3-93-71.t7",
-			 "blstm3ie-ep2-94-72.t7"}  
+			 "blstm3ie-ep2-94-72.t7"}
+  --]]
+
+  -- New paths taken from opt. Removing hard coding
+  local convens_paths = {opt.convens_paths1,
+                         opt.convens_paths2,
+			             opt.convens_paths3}
+  local lstmens_paths = {opt.lstmens_paths1,
+	                    opt.lstmens_paths2,
+			            opt.lstmens_paths3}
+
   opt.embed_size = 200
   opt.num_filters = 200
   opt.conv_fc_layer_size = 500
@@ -552,7 +569,9 @@ end
 function main()
     torch.manualSeed(opt.seed)
     cutorch.manualSeed(opt.seed)
-    cutorch.setDevice(opt.gpuid)
+    device_id = cutorch.getDevice()
+    cutorch.setDevice(device_id)
+    -- cutorch.setDevice(opt.gpuid)
 
     local trbatches, valbatches, V_sizes, nlabels, pred_batches, pboxrestartidxs = prep_data(opt.batchsize)
     local emb_sizes = {opt.embed_size, opt.embed_size/2, opt.embed_size/2}

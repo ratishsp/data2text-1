@@ -81,11 +81,13 @@ python data_utils.py -mode make_ie_data -input_path "../boxscore-data/rotowire" 
 This will create files `roto-ie.h5`, `roto-ie.dict`, and `roto-ie.labels`.
 
 ### Evaluating Generated summaries
-1. You can download the extraction models we ensemble to do the evaluation from this [link](https://drive.google.com/drive/u/1/folders/0B1ytQXPDuw7OdjBCUW50S2VIdDQ). There are six models in total, with the name pattern `*ie-ep*.t7`. Put these extraction models in the same directory as `extractor.lua`. (Note that `extractor.lua` hard-codes the paths to these saved models, so you'll need to change this if you want to substitute in new models.)
+1. You can download the extraction models we ensemble to do the evaluation from this <del>[link](https://drive.google.com/drive/u/1/folders/0B1ytQXPDuw7OdjBCUW50S2VIdDQ).</del> There are six models in total, with the name pattern <del>`*ie-ep*.t7`</del>. Put these extraction models in the same directory as `extractor.lua`. (Note that `extractor.lua` hard-codes the paths to these saved models, so you'll need to change this if you want to substitute in new models.)
 
-**Updated** extraction models can be downloaded from https://drive.google.com/drive/folders/1QKudbCwFuj1BAhpY58JstyGLZXvZ-2w-?usp=sharing
+<del>**Updated** extraction models can be downloaded from https://drive.google.com/drive/folders/1QKudbCwFuj1BAhpY58JstyGLZXvZ-2w-?usp=sharing</del>
 
 **Updated** (with fix for number words and order of relations) extraction models can be downloaded from https://drive.google.com/open?id=1WGLCndbPte0p738a9p_WcBh9elbnHNmI
+
+**Updated 7 March (@shubhamagarwal92)** extractor.lua can take file paths of the saved models. See extractor.sh for example. Default assumes extraction models are in the same directory as `extractor.lua`
 
 2. Once you've generated summaries, you can put them into a format the extraction system can consume as follows:
 
