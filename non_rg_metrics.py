@@ -55,8 +55,8 @@ def dedup_triples(triplist):
     this will be inefficient but who cares
     """
     dups = set()
-    for i in xrange(1, len(triplist)):
-        for j in xrange(i):
+    for i in range(1, len(triplist)):
+        for j in range(i):
             if trip_match(triplist[i], triplist[j]):
                 dups.add(i)
                 break
@@ -99,15 +99,15 @@ def calc_precrec(goldfi, predfi):
         total_gold += len(gold_triples[i])
     avg_prec = float(total_tp)/total_predicted
     avg_rec = float(total_tp)/total_gold
-    print "totals:", total_tp, total_predicted, total_gold
-    print "prec:", avg_prec, "rec:", avg_rec
+    print("totals:", total_tp, total_predicted, total_gold)
+    print("prec:", avg_prec, "rec:", avg_rec)
     return avg_prec, avg_rec
 
 def norm_dld(l1, l2):
     ascii_start = 0
     # make a string for l1
     # all triples are unique...
-    s1 = ''.join((unichr(ascii_start+i) for i in xrange(len(l1))))
+    s1 = ''.join((chr(ascii_start+i) for i in range(len(l1))))
     s1_upd = list(s1)
     for i in range(len(l1)):
         for j in range(i+1, len(l1)):
@@ -116,16 +116,16 @@ def norm_dld(l1, l2):
     s1_upd = ''.join(s1_upd)
     s2 = ''
     next_char = ascii_start + len(s1)
-    for j in xrange(len(l2)):
+    for j in range(len(l2)):
         found = None
         #next_char = chr(ascii_start+len(s1)+j)
-        for k in xrange(len(l1)):
+        for k in range(len(l1)):
             if trip_match(l2[j], l1[k]):
                 found = s1_upd[k]
                 #next_char = s1[k]
                 break
         if found is None:
-            s2 += unichr(next_char)
+            s2 += chr(next_char)
             next_char += 1
             #assert next_char <= 128
         else:
@@ -141,7 +141,7 @@ def calc_dld(goldfi, predfi):
     for i, triplist in enumerate(pred_triples):
         total_score += norm_dld(triplist, gold_triples[i])
     avg_score = float(total_score)/len(pred_triples)
-    print "avg score:", avg_score
+    print("avg score:", avg_score)
     return avg_score
 
 calc_precrec(sys.argv[1], sys.argv[2])
