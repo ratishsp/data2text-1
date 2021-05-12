@@ -107,7 +107,7 @@ def norm_dld(l1, l2):
     ascii_start = 0
     # make a string for l1
     # all triples are unique...
-    s1 = ''.join((chr(ascii_start+i) for i in xrange(len(l1))))
+    s1 = ''.join((unichr(ascii_start+i) for i in xrange(len(l1))))
     s1_upd = list(s1)
     for i in range(len(l1)):
         for j in range(i+1, len(l1)):
@@ -125,9 +125,9 @@ def norm_dld(l1, l2):
                 #next_char = s1[k]
                 break
         if found is None:
-            s2 += chr(next_char)
+            s2 += unichr(next_char)
             next_char += 1
-            assert next_char <= 128
+            #assert next_char <= 128
         else:
             s2 += found
     # return 1- , since this thing gives 0 to perfect matches etc
