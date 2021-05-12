@@ -1,3 +1,4 @@
+
 # data2text
 
 Code for [Challenges in Data-to-Document Generation](https://arxiv.org/abs/1707.08052) (Wiseman, Shieber, Rush; EMNLP 2017); much of this code is adapted from an earlier fork of [OpenNMT](https://github.com/OpenNMT/OpenNMT).
@@ -5,6 +6,9 @@ Code for [Challenges in Data-to-Document Generation](https://arxiv.org/abs/1707.
 The boxscore-data associated with the above paper can be downloaded from the [boxscore-data repo](https://github.com/harvardnlp/boxscore-data), and this README will go over running experiments on the RotoWire portion of the data; running on the SBNation data (or other data) is quite similar.
 
 **Update:** models and results reflecting the newly cleaned up data in the [boxscore-data repo](https://github.com/harvardnlp/boxscore-data) are now given below.
+
+**Update:** The branch `include_all_records` contains an updated version of `non_rg_metrics.py` which computes CS and CO metrics by including all the records. This newer version of `non_rg_metrics.py` is used to report the accuracy figures in the TACL paper [Data-to-text Generation with Macro Planning](https://arxiv.org/abs/2102.02723). It supports Python 3.
+The version in `master` branch excludes duplicate records. 
 
 ## Preprocessing
 Before training models, you must preprocess the data. Assuming the RotoWire json files reside at `~/Documents/code/boxscore-data/rotowire`, the following command will preprocess the data
@@ -150,3 +154,4 @@ On the test set:
 |Template            |99.95 / 54.15| 23.74 / 72.36|11.68|N/A  |8.93  |
 |Joint+Rec+TVD (B=5) |62.66 / 16.82|27.60 / 40.59 |14.57| 7.49 |13.61 |
 |Conditional   (B=5) |75.62 / 16.83|32.80 / 39.93 |15.62| 7.53 |14.19 |
+
