@@ -46,7 +46,7 @@ def int_value(input):
         value = text2num(input)
     return value
 
-# handling matches for number words too
+
 def trip_match(t1, t2):
     return int_value(t1[1]) == int_value(t2[1]) and t1[2] == t2[2] and same_ent(t1[0], t2[0])
 
@@ -68,13 +68,13 @@ def get_triples(fi):
     with open(fi) as f:
         for line in f:
             if line.isspace():
-                all_triples.append(dedup_triples(curr))
+                all_triples.append(curr)
                 curr = []
             else:
                 pieces = line.strip().split('|')
                 curr.append(tuple(pieces))
     if len(curr) > 0:
-        all_triples.append(dedup_triples(curr))
+        all_triples.append(curr)
     return all_triples
 
 def calc_precrec(goldfi, predfi):
@@ -83,9 +83,17 @@ def calc_precrec(goldfi, predfi):
     total_tp, total_predicted, total_gold = 0, 0, 0
     assert len(gold_triples) == len(pred_triples)
     for i, triplist in enumerate(pred_triples):
-        tp = sum((1 for j in xrange(len(triplist))
-                    if any(trip_match(triplist[j], gold_triples[i][k])
-                           for k in xrange(len(gold_triples[i])))))
+        tp = 0
+        corresponding_gold_triples = list(gold_triples[i])
+        for j in range(len(triplist)):
+            match_index = -1
+            for k in range(len(corresponding_gold_triples)):
+                if trip_match(triplist[j], corresponding_gold_triples[k]):
+                    match_index = k
+                    tp += 1
+                    break
+            if match_index != -1:
+                del corresponding_gold_triples[match_index]
         total_tp += tp
         total_predicted += len(triplist)
         total_gold += len(gold_triples[i])
@@ -100,6 +108,12 @@ def norm_dld(l1, l2):
     # make a string for l1
     # all triples are unique...
     s1 = ''.join((chr(ascii_start+i) for i in xrange(len(l1))))
+    s1_upd = list(s1)
+    for i in range(len(l1)):
+        for j in range(i+1, len(l1)):
+            if trip_match(l1[i], l1[j]):
+                s1_upd[j] = s1[i]
+    s1_upd = ''.join(s1_upd)
     s2 = ''
     next_char = ascii_start + len(s1)
     for j in xrange(len(l2)):
@@ -107,7 +121,7 @@ def norm_dld(l1, l2):
         #next_char = chr(ascii_start+len(s1)+j)
         for k in xrange(len(l1)):
             if trip_match(l2[j], l1[k]):
-                found = s1[k]
+                found = s1_upd[k]
                 #next_char = s1[k]
                 break
         if found is None:
@@ -117,7 +131,7 @@ def norm_dld(l1, l2):
         else:
             s2 += found
     # return 1- , since this thing gives 0 to perfect matches etc
-    return 1.0-normalized_damerau_levenshtein_distance(s1, s2)
+    return 1.0-normalized_damerau_levenshtein_distance(s1_upd, s2)
 
 def calc_dld(goldfi, predfi):
     gold_triples = get_triples(goldfi)
