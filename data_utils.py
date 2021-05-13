@@ -236,6 +236,7 @@ def get_rels(entry, ents, nums, players, teams, cities):
                             found = True
                 if not found:
                     rels.append((ent, numtup, "NONE", None)) # should i specialize the NONE labels too?
+    rels.sort(key=lambda rel: rel[1][0])
     return rels
 
 def append_candidate_rels(entry, summ, all_ents, prons, players, teams, cities, candrels):
